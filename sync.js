@@ -32,6 +32,9 @@ async function fetchLatestApk(repo) {
     }
 
     const release = await res.json();
+    const tag = release.tag_name || 'latest';
+    const repoName = repo.split('/')[1];
+    
     const apkAssets = release.assets.filter(asset => asset.name.endsWith('.apk'));
 
     if (apkAssets.length === 0) {
@@ -40,16 +43,17 @@ async function fetchLatestApk(repo) {
     }
 
     for (const asset of apkAssets) {
-      const filePath = path.join(REPO_DIR, asset.name);
+      const uniqueFileName = `${repoName}_${tag}_${asset.name}`;
+      const filePath = path.join(REPO_DIR, uniqueFileName);
 
       if (!fs.existsSync(filePath)) {
-        console.log(`Descargando ${asset.name} de ${repo}...`);
+        console.log(`Descargando ${asset.name} como ${uniqueFileName}...`);
         const apkRes = await fetch(asset.browser_download_url);
         const arrayBuffer = await apkRes.arrayBuffer();
         fs.writeFileSync(filePath, Buffer.from(arrayBuffer));
-        console.log(`Guardado: ${asset.name}`);
+        console.log(`Guardado exitosamente: ${uniqueFileName}`);
       } else {
-        console.log(`El archivo ${asset.name} ya existe. Omitiendo.`);
+        console.log(`El archivo ${uniqueFileName} ya existe. Omitiendo.`);
       }
     }
   } catch (error) {

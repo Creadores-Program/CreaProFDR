@@ -1,0 +1,49 @@
+name: Sync Repo F-Droid
+
+on:
+  schedule:
+    - cron: '0 0 1,15 * *'
+  
+  workflow_dispatch:
+
+  repository_dispatch:
+    types: [app_updated]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Config Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install fdroidserver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fdroidserver python3-pip
+
+      - name: Download APKs vía Node.js
+        run: node sync.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update F-Droid
+        run: |
+          if [ ! -f "config.yml" ]; then
+            fdroid init --bare
+          fi
+          fdroid update --create-metadata
+
+      - name: Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./repo

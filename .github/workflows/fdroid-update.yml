@@ -38,7 +38,7 @@ jobs:
       - name: Update F-Droid
         run: |
           if [ ! -f "config.yml" ]; then
-            fdroid init --bare
+            fdroid init --no-prompt
           fi
           fdroid update --create-metadata
 

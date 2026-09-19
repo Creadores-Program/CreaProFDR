@@ -45,12 +45,12 @@ jobs:
             fdroid init --no-prompt
           fi
           chmod 600 config.yml
-          fdroid update --create-metadata -p
+          fdroid update --create-metadata
 
       - name: Github Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          publish_dir: ./repo
+          destination_dir: repo
           keep_files: false
-          exclude_assets: '.git,.github,config.yml,CreaProFDR.keystore,sync.js'

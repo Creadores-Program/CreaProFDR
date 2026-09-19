@@ -44,6 +44,7 @@ jobs:
           if [ ! -f "config.yml" ]; then
             fdroid init --no-prompt
           fi
+          chmod 600 config.yml
           fdroid update --create-metadata
 
       - name: Github Pages
@@ -51,3 +52,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./repo
+          destination_dir: repo

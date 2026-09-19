@@ -1,5 +1,8 @@
 # CreaProFDR Repo 🚀
-Repositorio personalizado de **F-Droid** enfocado en revivir dispositivos antiguos con Android (¡desde Android 2.1!) y brindar apps útiles tanto para versiones legacy como modernas.
+
+![Icono](./icon.jpg)
+
+Repositorio personalizado de **F-Droid** enfocado en brindar apps/juegos útiles tanto para versiones legacy como modernas.
 
 Link oficial del repositorio:
 

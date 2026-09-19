@@ -4,6 +4,7 @@ import path from 'node:path';
 const REPOSITORIES = [
   {
     repo: 'Creadores-Program/CreaProDroid',
+    package: 'org.CreadoresProgram.CreaProDroid',
     categories: ['Utility', 'System', 'Internet', 'System'],
     antiFeatures: ['NonFreeNet'],
     website: 'https://github.com/Creadores-Program/CreaProDroid',
@@ -11,6 +12,7 @@ const REPOSITORIES = [
   },
   {
     repo: 'Creadores-Program/CreaTV',
+    package: 'org.CreadoresProgram.CreaTv',
     categories: ['Multimedia', 'Internet'],
     antiFeatures: ['NonFreeNet'],
     website: 'https://github.com/Creadores-Program/CreaTV',
@@ -18,6 +20,7 @@ const REPOSITORIES = [
   },
   {
     repo: 'Creadores-Program/legacysend',
+    package: 'com.blithe.legacysend',
     categories: ['Connectivity', 'System', 'Utility'],
     website: 'https://github.com/Creadores-Program/legacysend'
   }
@@ -41,14 +44,21 @@ function getHeaders() {
   return headers;
 }
 
+function getAppId(repoConfig) {
+  if (typeof repoConfig !== 'string' && repoConfig.package) {
+    return repoConfig.package;
+  }
+  const repo = typeof repoConfig === 'string' ? repoConfig : repoConfig.repo;
+  return repo.split('/')[1];
+}
+
 async function generateAppMetadata(repoConfig) {
   const repo = typeof repoConfig === 'string' ? repoConfig : repoConfig.repo;
+  const appId = getAppId(repoConfig);
   const categories = repoConfig.categories || ['Utility'];
   const antiFeatures = repoConfig.antiFeatures || [];
   const donate = repoConfig.donate || '';
   const website = repoConfig.website || '';
-  
-  const repoName = repo.split('/')[1];
 
   try {
     const res = await fetch(`https://api.github.com/repos/${repo}`, { headers: getHeaders() });
@@ -74,8 +84,8 @@ IssueTracker: ${data.html_url}/issues
 Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"
 `;
 
-    fs.writeFileSync(path.join(METADATA_DIR, `${repoName}.yml`), yamlContent, 'utf8');
-    console.log(`[Metadatos] Generado ${repoName}.yml con campos avanzados`);
+    fs.writeFileSync(path.join(METADATA_DIR, `${appId}.yml`), yamlContent, 'utf8');
+    console.log(`[Metadatos] Generado ${appId}.yml con campos avanzados`);
   } catch (error) {
     console.error(`Error creando metadatos para ${repo}:`, error);
   }
@@ -85,8 +95,8 @@ async function fetchScreenshots(repoConfig) {
   if (typeof repoConfig === 'string' || !repoConfig.screenshotsDir) return;
 
   const repo = repoConfig.repo;
-  const repoName = repo.split('/')[1];
-  const targetDir = path.join(METADATA_DIR, repoName, 'es-ES', 'phoneScreenshots');
+  const appId = getAppId(repoConfig);
+  const targetDir = path.join(METADATA_DIR, appId, 'es-ES', 'phoneScreenshots');
 
   try {
     const url = `https://api.github.com/repos/${repo}/contents/${repoConfig.screenshotsDir}`;
@@ -102,7 +112,7 @@ async function fetchScreenshots(repoConfig) {
       if (file.type === 'file' && /\.(png|jpg|jpeg|webp)$/i.test(file.name)) {
         const destPath = path.join(targetDir, file.name);
         if (!fs.existsSync(destPath)) {
-          console.log(`[Capturas] Descargando ${file.name} para ${repoName}...`);
+          console.log(`[Capturas] Descargando ${file.name} para ${appId}...`);
           const imgRes = await fetch(file.download_url);
           const arrayBuffer = await imgRes.arrayBuffer();
           fs.writeFileSync(destPath, Buffer.from(arrayBuffer));

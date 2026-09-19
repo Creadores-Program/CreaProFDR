@@ -6,3 +6,6 @@ repo_description: >-
 repo_url: "https://creadores-program.github.io/CreaProFDR/repo"
 
 language: "es"
+
+keystore: "CreaProFDR.keystore"
+repo_keyalias: "CreaProFDRkey"

@@ -2,31 +2,124 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const REPOSITORIES = [
-  'Creadores-Program/CreaProDroid',
-  'Creadores-Program/CreaTV',
-  'Creadores-Program/legacysend'
+  {
+    repo: 'Creadores-Program/CreaProDroid',
+    categories: ['Utility', 'System', 'Internet', 'System'],
+    antiFeatures: ['NonFreeNet'],
+    website: 'https://github.com/Creadores-Program/CreaProDroid',
+    screenshotsDir: 'GithubResources'
+  },
+  {
+    repo: 'Creadores-Program/CreaTV',
+    categories: ['Multimedia', 'Internet'],
+    antiFeatures: ['NonFreeNet'],
+    website: 'https://github.com/Creadores-Program/CreaTV',
+    screenshotsDir: '.github/images'
+  },
+  {
+    repo: 'Creadores-Program/legacysend',
+    categories: ['Connectivity', 'System', 'Utility'],
+    website: 'https://github.com/Creadores-Program/legacysend'
+  }
 ];
 
 const REPO_DIR = path.join(process.cwd(), 'repo');
+const METADATA_DIR = path.join(process.cwd(), 'metadata');
 const CONFIG_PATH = path.join(process.cwd(), 'config.yml');
 
-if (!fs.existsSync(REPO_DIR)) {
-  fs.mkdirSync(REPO_DIR, { recursive: true });
-}
+if (!fs.existsSync(REPO_DIR)) fs.mkdirSync(REPO_DIR, { recursive: true });
+if (!fs.existsSync(METADATA_DIR)) fs.mkdirSync(METADATA_DIR, { recursive: true });
 
-async function fetchAllApks(repo) {
-  const url = `https://api.github.com/repos/${repo}/releases?per_page=50`;
+function getHeaders() {
   const headers = {
     'User-Agent': 'FDroid-Repo-Builder',
     'Accept': 'application/vnd.github.v3+json'
   };
-
   if (process.env.GITHUB_TOKEN) {
     headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
   }
+  return headers;
+}
+
+async function generateAppMetadata(repoConfig) {
+  const repo = typeof repoConfig === 'string' ? repoConfig : repoConfig.repo;
+  const categories = repoConfig.categories || ['Utility'];
+  const antiFeatures = repoConfig.antiFeatures || [];
+  const donate = repoConfig.donate || '';
+  const website = repoConfig.website || '';
+  
+  const repoName = repo.split('/')[1];
 
   try {
-    const res = await fetch(url, { headers });
+    const res = await fetch(`https://api.github.com/repos/${repo}`, { headers: getHeaders() });
+    if (!res.ok) return;
+    
+    const data = await res.json();
+    const categoriesYaml = categories.map(c => `  - ${c}`).join('\n');
+    
+    const antiFeaturesYaml = antiFeatures.length > 0 
+      ? `AntiFeatures:\n${antiFeatures.map(a => `  - ${a}`).join('\n')}\n`
+      : '';
+
+    const donateYaml = donate ? `Donate: ${donate}\n` : '';
+    const websiteYaml = website ? `WebSite: ${website}\n` : `WebSite: ${data.html_url}\n`;
+
+    const yamlContent = `AuthorName: "Creadores Program"
+Categories:
+${categoriesYaml}
+${antiFeaturesYaml}${donateYaml}${websiteYaml}
+License: ${data.license?.spdx_id || 'NOASSERTION'}
+SourceCode: ${data.html_url}
+IssueTracker: ${data.html_url}/issues
+Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"
+`;
+
+    fs.writeFileSync(path.join(METADATA_DIR, `${repoName}.yml`), yamlContent, 'utf8');
+    console.log(`[Metadatos] Generado ${repoName}.yml con campos avanzados`);
+  } catch (error) {
+    console.error(`Error creando metadatos para ${repo}:`, error);
+  }
+}
+
+async function fetchScreenshots(repoConfig) {
+  if (typeof repoConfig === 'string' || !repoConfig.screenshotsDir) return;
+
+  const repo = repoConfig.repo;
+  const repoName = repo.split('/')[1];
+  const targetDir = path.join(METADATA_DIR, repoName, 'es-ES', 'phoneScreenshots');
+
+  try {
+    const url = `https://api.github.com/repos/${repo}/contents/${repoConfig.screenshotsDir}`;
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) return;
+
+    const files = await res.json();
+    if (!Array.isArray(files)) return;
+
+    fs.mkdirSync(targetDir, { recursive: true });
+
+    for (const file of files) {
+      if (file.type === 'file' && /\.(png|jpg|jpeg|webp)$/i.test(file.name)) {
+        const destPath = path.join(targetDir, file.name);
+        if (!fs.existsSync(destPath)) {
+          console.log(`[Capturas] Descargando ${file.name} para ${repoName}...`);
+          const imgRes = await fetch(file.download_url);
+          const arrayBuffer = await imgRes.arrayBuffer();
+          fs.writeFileSync(destPath, Buffer.from(arrayBuffer));
+        }
+      }
+    }
+  } catch (error) {
+    console.error(`Error descargando capturas de ${repo}:`, error);
+  }
+}
+
+async function fetchAllApks(repoConfig) {
+  const repo = typeof repoConfig === 'string' ? repoConfig : repoConfig.repo;
+  const url = `https://api.github.com/repos/${repo}/releases?per_page=50`;
+
+  try {
+    const res = await fetch(url, { headers: getHeaders() });
     if (!res.ok) {
       console.error(`Error consultando ${repo}: ${res.statusText}`);
       return;
@@ -41,23 +134,20 @@ async function fetchAllApks(repo) {
     for (const release of releases) {
       const tag = release.tag_name || 'unknown';
       const repoName = repo.split('/')[1];
-      
       const apkAssets = release.assets.filter(asset => asset.name.endsWith('.apk'));
 
-      if (apkAssets.length === 0) {
-        continue;
-      }
+      if (apkAssets.length === 0) continue;
 
       for (const asset of apkAssets) {
         const uniqueFileName = `${repoName}_${tag}_${asset.name}`;
         const filePath = path.join(REPO_DIR, uniqueFileName);
 
         if (!fs.existsSync(filePath)) {
-          console.log(`Descargando ${asset.name} (Tag: ${tag})...`);
+          console.log(`Descargando ${asset.name} (${tag})...`);
           const apkRes = await fetch(asset.browser_download_url);
           const arrayBuffer = await apkRes.arrayBuffer();
           fs.writeFileSync(filePath, Buffer.from(arrayBuffer));
-          console.log(`Guardado exitosamente: ${uniqueFileName}`);
+          console.log(`Guardado: ${uniqueFileName}`);
         } else {
           console.log(`El archivo ${uniqueFileName} ya existe. Omitiendo.`);
         }
@@ -87,8 +177,10 @@ function appendPasswordsToConfig() {
 }
 
 async function run() {
-  for (const repo of REPOSITORIES) {
-    await fetchAllApks(repo);
+  for (const item of REPOSITORIES) {
+    await fetchAllApks(item);
+    await generateAppMetadata(item);
+    await fetchScreenshots(item);
   }
 
   appendPasswordsToConfig();

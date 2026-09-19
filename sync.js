@@ -8,13 +8,14 @@ const REPOSITORIES = [
 ];
 
 const REPO_DIR = path.join(process.cwd(), 'repo');
+const CONFIG_PATH = path.join(process.cwd(), 'config.yml');
 
 if (!fs.existsSync(REPO_DIR)) {
   fs.mkdirSync(REPO_DIR, { recursive: true });
 }
 
-async function fetchLatestApk(repo) {
-  const url = `https://api.github.com/repos/${repo}/releases/latest`;
+async function fetchAllApks(repo) {
+  const url = `https://api.github.com/repos/${repo}/releases?per_page=50`;
   const headers = {
     'User-Agent': 'FDroid-Repo-Builder',
     'Accept': 'application/vnd.github.v3+json'
@@ -31,29 +32,35 @@ async function fetchLatestApk(repo) {
       return;
     }
 
-    const release = await res.json();
-    const tag = release.tag_name || 'latest';
-    const repoName = repo.split('/')[1];
-    
-    const apkAssets = release.assets.filter(asset => asset.name.endsWith('.apk'));
-
-    if (apkAssets.length === 0) {
-      console.log(`No se encontraron archivos .apk en la última release de ${repo}`);
+    const releases = await res.json();
+    if (!Array.isArray(releases) || releases.length === 0) {
+      console.log(`No se encontraron releases en ${repo}`);
       return;
     }
 
-    for (const asset of apkAssets) {
-      const uniqueFileName = `${repoName}_${tag}_${asset.name}`;
-      const filePath = path.join(REPO_DIR, uniqueFileName);
+    for (const release of releases) {
+      const tag = release.tag_name || 'unknown';
+      const repoName = repo.split('/')[1];
+      
+      const apkAssets = release.assets.filter(asset => asset.name.endsWith('.apk'));
 
-      if (!fs.existsSync(filePath)) {
-        console.log(`Descargando ${asset.name} como ${uniqueFileName}...`);
-        const apkRes = await fetch(asset.browser_download_url);
-        const arrayBuffer = await apkRes.arrayBuffer();
-        fs.writeFileSync(filePath, Buffer.from(arrayBuffer));
-        console.log(`Guardado exitosamente: ${uniqueFileName}`);
-      } else {
-        console.log(`El archivo ${uniqueFileName} ya existe. Omitiendo.`);
+      if (apkAssets.length === 0) {
+        continue;
+      }
+
+      for (const asset of apkAssets) {
+        const uniqueFileName = `${repoName}_${tag}_${asset.name}`;
+        const filePath = path.join(REPO_DIR, uniqueFileName);
+
+        if (!fs.existsSync(filePath)) {
+          console.log(`Descargando ${asset.name} (Tag: ${tag})...`);
+          const apkRes = await fetch(asset.browser_download_url);
+          const arrayBuffer = await apkRes.arrayBuffer();
+          fs.writeFileSync(filePath, Buffer.from(arrayBuffer));
+          console.log(`Guardado exitosamente: ${uniqueFileName}`);
+        } else {
+          console.log(`El archivo ${uniqueFileName} ya existe. Omitiendo.`);
+        }
       }
     }
   } catch (error) {
@@ -61,10 +68,30 @@ async function fetchLatestApk(repo) {
   }
 }
 
+function appendPasswordsToConfig() {
+  const password = process.env.CREAPROFDRKEYCONTRE;
+
+  if (!password) {
+    console.error('Error: No se encontró la variable de entorno con la contraseña.');
+    return;
+  }
+
+  const yamlContent = `\nkeypass: "${password}"\nkeystorepass: "${password}"\n`;
+
+  try {
+    fs.appendFileSync(CONFIG_PATH, yamlContent, 'utf8');
+    console.log('Contraseñas clave agregadas exitosamente a config.yml');
+  } catch (err) {
+    console.error('Error al actualizar config.yml:', err);
+  }
+}
+
 async function run() {
   for (const repo of REPOSITORIES) {
-    await fetchLatestApk(repo);
+    await fetchAllApks(repo);
   }
+
+  appendPasswordsToConfig();
 }
 
 run();

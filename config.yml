@@ -3,7 +3,7 @@ repo_icon: "icon.jpg"
 repo_description: >-
   El repositorio oficial de Creadores Program de F-droid para descargar nuestras apps como CreaTV o LegacySend!
 
-repo_url: "https://creadores-program.github.io/CreaProFDR"
+repo_url: "https://creadores-program.github.io/CreaProFDR/repo"
 
 language: "es"
 

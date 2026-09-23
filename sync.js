@@ -186,11 +186,46 @@ function appendPasswordsToConfig() {
   }
 }
 
+async function fetchChangelogs(repoConfig) {
+  const repo = typeof repoConfig === 'string' ? repoConfig : repoConfig.repo;
+  const appId = getAppId(repoConfig);
+  const url = `https://api.github.com/repos/${repo}/releases?per_page=50`;
+
+  try {
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) return;
+
+    const releases = await res.json();
+    if (!Array.isArray(releases)) return;
+
+    const changelogDir = path.join(METADATA_DIR, appId, 'es-ES', 'changelogs');
+
+    for (const release of releases) {
+      if (!release.body || release.body.trim() === '') continue;
+
+      const changelogContent = release.body.trim();
+
+      fs.mkdirSync(changelogDir, { recursive: true });
+
+      const fileName = `${release.tag_name.replace(/^v/, '')}.txt`;
+      const filePath = path.join(changelogDir, fileName);
+
+      if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, changelogContent, 'utf8');
+        console.log(`[Changelog] Creado ${fileName} para ${appId}`);
+      }
+    }
+  } catch (error) {
+    console.error(`Error guardando changelogs de ${repo}:`, error);
+  }
+}
+
 async function run() {
   for (const item of REPOSITORIES) {
     await fetchAllApks(item);
     await generateAppMetadata(item);
     await fetchScreenshots(item);
+    await fetchChangelogs(item);
   }
 
   appendPasswordsToConfig();

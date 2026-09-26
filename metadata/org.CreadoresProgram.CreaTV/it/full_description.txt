@@ -1,0 +1,64 @@
+**CreaTV** è un client non ufficiale per piattaforme di *streaming* progettato specificamente per dispositivi **Android 2.3 a Android 10**. Consente un accesso leggero e ottimizzato ai contenuti in diretta.
+
+---
+
+## 🚀 Caratteristiche e Compatibilità
+
+CreaTV supporta le piattaforme di streaming più popolari:
+
+- 🟣 **Twitch**
+- 🟢 **Kick**
+- 🖤 **TikTok Live**
+- 🔴 **YouTube Live** *(Implementato tramite iframe API per aggirare le restrizioni anti-bot)*
+
+---
+
+## ⚙️ Requisiti di Sistema
+
+- **Sistema Operativo:** Da Android 2.3 (Gingerbread) a Android 10 (Quince Tart).
+- **Lettore Video Esterno:** È **indispensabile** disporre di un lettore video installato sul dispositivo per riprodurre gli stream.
+
+---
+
+## 🧪 Test e Lettori Consigliati
+
+- ❌ **Google Foto:** È probabile che presenti errori o problemi di incompatibilità durante la riproduzione su versioni datate di Android.
+- ✅ **VLC Player (Consigliato per Android 4.0+):** Si consiglia vivamente di utilizzare **VLC Player**, in quanto offre maggiore stabilità, compatibilità con i formati di rete e funzionalità avanzate come Picture-in-Picture (PiP).
+> [!WARNING]
+> Presenta chiusure impreviste (crash) su **Android da 2.3 a 3.2**
+- ✅ **MX Player (Consigliato per Android 2.3–3.2):** Funziona correttamente e senza errori nelle versioni legacy in cui VLC genera problemi.
+
+---
+
+## 💬 Supporto Chat
+
+Attualmente, la chat dal vivo è **supportata solo per Twitch**.
+
+### Come usare la chat?
+1. Spunta la casella relativa alla chat all'interno dell'applicazione **CreaTV**.
+2. Quando avvii lo stream, apri il lettore video (ad es. VLC Player) e seleziona l'opzione **Riduci a icona / Picture-in-Picture (PiP)**.
+3. Il lettore rimarrà in una piccola finestra mobile mentre la chat verrà mostrata e utilizzata sullo sfondo.
+
+---
+
+## ⚠️ Problemi Noti e Note Tecniche
+
+### 1. Ritardi o riavvio del Backend (Render.com)
+A volte, all'avvio di un video di YouTube o di uno stream di altre piattaforme, l'app potrebbe mostrare **errori senza contesto** o **timeout**.
+- **Causa:** Per offrire l'app in modo completamente gratuito, il servizio backend è ospitato sulla piattaforma **Render.com** (piano gratuito). Se l'istanza va in sospensione per inattività, impiegherà alcuni secondi a riattivarsi.
+- **Soluzione:** Se lo stream fallisce al primo tentativo, **attendi semplicemente 3 secondi e riprova**.
+
+### 2. Prestazioni su Versioni Datate di Android (Android 2.3 - 4.4)
+- Sulle versioni di Android da 2.3 a 4.4 (Gingerbread / KitKat), si potrebbero riscontrare **lag o bug** con YouTube Live. Ciò è dovuto alla `iframe API` non ottimizzata per le versioni obsolete della WebView di sistema.
+
+---
+
+## 🎨 Crediti
+
+- **Design del logo:** ManuReal_
+
+---
+
+## 📄 Note Legali e Esclusione di Responsabilità
+
+* **Disclaimer:** CreaTV è un client non ufficiale e non è affiliato, sponsorizzato, approvato o collegato in alcun modo a Twitch, Kick, TikTok, YouTube o Google.

@@ -1,0 +1,111 @@
+An independently developed, native Android Java application for local area network (LAN) file transfers. Its goal is to provide compatibility with the device discovery and Upload API of LocalSend Protocol v2.2 on legacy devices (Android 2.3 through Android 6.0 / API 9 to API 23). The project does not reference, import, or build from any LocalSend source directories.
+
+> **⚠️ NOTE:** 
+> The **Legacy20** build targeting Android 2.0 - 2.2 (API 5–8) is currently an **experimental** feature. Due to severe API limitations in the TLS/JSSE libraries and Dalvik runtime of early Android systems, this build requires the [Wolfius](https://github.com/gohoski/Wolfius) environment/patch to properly perform HTTPS encrypted transfers and run correctly.
+> 
+> *This project is a fork of [legacysend](https://github.com/Blithe-Chiang/legacysend).*
+
+## Features
+
+* UDP multicast device discovery, announcements, and response handling.
+* HTTP/HTTPS LocalSend v2 (v2.2) registration endpoints.
+* Support for Chunked Transfer Encoding.
+* Single and multi-file selection, sending, and receiving.
+* Accept / Decline prompt before receiving.
+* File-level token, session ID, origin IP, and certificate fingerprint validation.
+* Streaming uploads and disk saving without loading complete files into memory.
+* Overall progress tracking, error notifications, and cancellation support from either side.
+* Automatic renaming with `(1)`, `(2)` suffixes to prevent overwrites.
+* Compatibility with filenames containing Chinese characters, spaces, and special symbols.
+* Foreground service for receiving; Activity recreation does not interrupt ongoing transfers.
+* User interface localized in Simplified Chinese.
+
+## Main Project Structure
+
+```text
+app/src/main/java/com/blithe/legacysend/
+├── LegacySendApp.java       App-level state, background tasks, and UI events
+├── ReceiveService.java      Foreground keep-alive receiving service
+├── discovery/               UDP multicast discovery
+├── model/                   Data models for devices and files
+├── protocol/                LocalSend JSON protocol formats (v2.2)
+├── security/                Self-signed identity, BKS KeyStore, mTLS, certificate pinning, SimpleX509Generator
+├── server/                  HTTP/HTTPS endpoints (register, prepare, upload, cancel)
+├── storage/                 Storage handling with SAF, legacy file system, and renaming logic
+├── transfer/                HTTPS/HTTP sending client, progress control, and cancellation
+├── ui/                      Native Android Views user interface
+└── util/                    Stream copying and transfer speed utilities
+
+```
+
+The source code is 100% Java—no dependencies on Kotlin, Jetpack Compose, Flutter, Dart, or React Native. Uses Groovy DSL for Gradle.
+
+## Compatibility & Adaptations for Android 2.3–6.0 (API 9–23)
+
+* **minSdk 9 (Android 2.3) to Android 6.0 (API 23) Coverage:** Specifically adapted for legacy hardware and firmware environments.
+* **Certificate Generation on API 9–17:** Custom `SimpleX509Generator` implementation to resolve the absence of `AndroidKeyStore` and overcome strict ASN.1/DER parsing in OpenSSL / Conscrypt on Android 2.3–4.2.
+* **BKS KeyStore Format:** Uses `BouncyCastle` (`BKS`) on API 9–17 for storing private keys and certificates, preventing `PKCS12` serialization crashes on Android 2.3.
+* **ASN.1 / DER Structure Fixes:** Wraps `AttributeTypeAndValue` in `SEQUENCE` within the certificate hierarchy and explicitly changes the string type of `commonName` (2.5.4.3) to `PrintableString` (0x13), resolving the OpenSSL `ASN.1 encoding routines:OPENSSL_internal:WRONG_TAG` exception.
+* **Y2K38 Overflow Mitigation:** Self-signed certificates on API 9–17 use `SHA1withRSA` signatures with a validity limited to 10 years to prevent 32-bit integer timestamp overflows.
+* **Legacy File Access & SAF:** API 19–23 uses `ACTION_OPEN_DOCUMENT` with SAF, while API 9–18 uses an internal file explorer to directly read external storage.
+* **TLS Reception Compatibility on Android 4.4.2 (API 19–20):** The TLS 1.2 server on Kindle Android 4.4.2 only supports CBC ciphers, which are incompatible with the Rust TLS client in LocalSend 1.17.0. On API 19–20, receiving uses the official protocol `protocol: "http"` mode. API 9–18 and API 21–23 maintain HTTPS for receiving and all outgoing transfers.
+* **Storage Paths:** Save location is unified to the public `Download/LegacySend` folder across all supported versions (API 9–23).
+* **MulticastLock & Multithreading:** Multicast listening is secured after acquiring `MulticastLock`; all network and file I/O operations execute on background threads.
+* **Stream Processing:** Transfers use a 32 KiB buffer for chunked streaming, validating consistency between actual received bytes and metadata sizes.
+* **Notification System:** Foreground Service uses traditional system notifications across API 9 to 23.
+
+## Dependencies
+
+Zero third-party runtime dependencies. Uses only the Android SDK, Java Standard Library, and `org.json` (included in the operating system).
+
+Test Dependencies:
+
+* JUnit 4.13.2: Host JVM test execution only (not packaged into the APK).
+* `org.json:json:20240303`: Mock implementation for host JVM unit testing (not packaged into the APK).
+
+## Verification Status
+
+### Tested & Verified Features
+
+* 12 host unit tests: protocol serialization, multi-file metadata, special/Chinese characters, accept/decline/cancel/timeout, renaming, SHA-256 hash calculation, and stream copying.
+* Gradle build, Lint inspection, and debug APK packaging.
+* Manifest verification confirming `minSdkVersion=9`, `compileSdkVersion=23`, and `targetSdkVersion=23`.
+* APK v1/v2 signature validation (v1 signature ready for installation on Android 2.3, 4.4.2, up to 6.0).
+* **Physical Test on Android 2.3.6 (API 9):** Self-signed certificate successfully generated and loaded (no `WRONG_TAG` exception), HTTPS service started on port 53317, official LocalSend client discovered, single/multi-file chunked upload received and written to disk with matching SHA-256 hashes.
+* **Physical Test on Kindle Android 4.4.2 (API 19):** App startup, internal file selection, successful transfer to Android 11, and successful file reception from official LocalSend 1.17.0 with SHA-256 verification.
+
+## File Selection Fix for Kindle 4.4.2 & Older Systems
+
+The DocumentsUI app on Kindle firmware retains records of deleted or moved downloads, throwing `FileNotFoundException` when attempting to open their `content://` URIs. API 9–20 uses an internal file browser that directly lists existing and readable files from external storage; API 21–23 continues to use system SAF.
+
+### Implemented but Pending Extensive Field Testing
+
+* Frequent Wi-Fi network switching on physical hardware, aggressive manufacturer battery optimization restrictions, and long-duration large file transfers on Android 5.0–6.0.
+
+### Unimplemented Features
+
+* LocalSend Reverse Download API (browser downloads); core Android-to-LocalSend Upload API does not depend on this.
+* Secondary features such as PINs, history, clipboard sharing, themes, auto-updates, or user accounts.
+* Fallback subnet IP scanning; currently relies on default multicast discovery and bi-directional `/register` confirmation.
+
+### Development Environment Limitations
+
+* Android Emulator 36 on Apple Silicon architecture does not support ARMv7 QEMU2 system images for API 9 or API 19.
+
+## Security Boundary for API 19–20 Receiving Mode
+
+Due to the lack of overlapping cipher suites between Android 4.4 system TLS and LocalSend 1.17.0, reception on API 19–20 operates in HTTP mode as allowed by the protocol specification. In this direction, files and metadata are not encrypted via TLS, though origin IP checks, random session IDs, and per-file tokens remain active. Use only on trusted local networks. Outgoing transfers from LegacySend and receiving on API 9–18 / API 21–23 enforce HTTPS encryption and certificate pinning.
+
+For additional specification details and API endpoints, refer to [docs/protocol.md](https://github.com/Blithe-Chiang/legacysend/blob/main/docs/protocol.md).
+
+## Contributing
+
+Issues and Pull Requests are welcome. The primary goal of LegacySend is to provide a lightweight, stable, and interoperable transfer solution with LocalSend (v2.2) on legacy devices (Android 2.3 to Android 6.0 / API 9 to API 23). Preserving compatibility with older systems takes priority over adding new features.
+
+### Development Guidelines
+
+* Maintain an independent implementation without copying or importing source code from LocalSend.
+* Use strictly Java and native Android Views (avoid Kotlin, Jetpack Compose, Flutter, or Google Play Services).
+* Keep the compatibility focus strictly within `minSdkVersion 9` to `targetSdkVersion 23`.
+* Execute all network and file I/O operations on background threads using stream processing.
+* Verify behavior on API 9, API 19, and Android 6.0 before submitting major changes.

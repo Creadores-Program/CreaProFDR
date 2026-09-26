@@ -1,0 +1,64 @@
+**CreaTV** is an unofficial streaming platform client specifically designed for **Android 2.3 to Android 10** devices. It allows lightweight and optimized access to live streaming content.
+
+---
+
+## 🚀 Features & Compatibility
+
+CreaTV supports the most popular streaming platforms:
+
+- 🟣 **Twitch**
+- 🟢 **Kick**
+- 🖤 **TikTok Live**
+- 🔴 **YouTube Live** *(Implemented via iframe API to bypass anti-bot restrictions)*
+
+---
+
+## ⚙️ System Requirements
+
+- **Operating System:** Android 2.3 (Gingerbread) up to Android 10 (Quince Tart).
+- **External Video Player:** An external video player installed on the device is **required** to play streams.
+
+---
+
+## 🧪 Testing & Player Recommendations
+
+- ❌ **Google Photos:** Likely to fail or experience incompatibility issues when attempting to stream on older Android versions.
+- ✅ **VLC Player (Recommended for Android 4.0+):** It is strongly recommended to use **VLC Player**, as it offers greater stability, compatibility with network formats and advanced features such as Picture-in-Picture (PiP).
+> [!WARNING]
+> Presents unexpected closures (crashes) on **Android 2.3 to 3.2**
+- ✅ **MX Player (Recommended for Android 2.3–3.2):** It works correctly and without failures in legacy versions where VLC generates problems.
+
+---
+
+## 💬 Chat Support
+
+Currently, live chat is **only supported for Twitch**.
+
+### How to use the chat feature?
+1. Enable the chat checkbox inside the **CreaTV** app.
+2. When starting a stream, launch the external video player (e.g., VLC Player) and tap the **Minimize / Picture-in-Picture (PiP)** option.
+3. The video will float in a small window while the live chat renders in the background.
+
+---
+
+## ⚠️ Known Issues & Technical Notes
+
+### 1. Backend Delays / Cold Starts (Render.com)
+Occasionally, launching a non-YouTube stream or loading the YouTube Player may trigger **uncontextualized errors** or a **timeout**.
+- **Cause:** To keep the app completely free, the backend server is hosted on **Render.com** (free tier). If the instance goes idle, it takes a few seconds to spin back up.
+- **Solution:** If a stream fails on the first attempt, **simply try again after 3 seconds**.
+
+### 2. Performance on Older Android Versions (Android 2.3 - 4.4)
+- Devices running Android 2.3 to 4.4 (Gingerbread / KitKat) may experience **lag or bugs** on YouTube Live streams. This is caused by the unoptimized iframe API performance on legacy system WebViews.
+
+---
+
+## 🎨 Credits
+
+- **Logo Design:** zManuReal_
+
+---
+
+## 📄 Disclaimer
+
+* **Disclaimer:** CreaTV is an unofficial client and is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Twitch, Kick, TikTok, YouTube, or Google.

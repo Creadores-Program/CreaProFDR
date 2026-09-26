@@ -1,0 +1,52 @@
+CreaProDroid is an artificial intelligence assistant designed specifically for older Android devices (versions 4.1 to 9). Powered by Google Gemini and Pollinations.ai technology, this assistant is optimized to offer a smooth and helpful experience on resource-constrained devices.
+If this version is not compatible, you can try [CreaProPhone J2ME](https://github.com/Creadores-Program/CreaProPhone) with J2ME Loader, which extends compatibility back to Android 2.3.
+
+## **Features**
+- **AI Assistant**: Answers questions, performs tasks, and provides personalized assistance.
+- **Legacy Android Compatibility**: Designed to run on devices running Android 4.1 through 9.
+- **Voice Recognition**: Allows interaction using voice commands.
+- **Image Generation**: Generates images based on user descriptions powered by Pollinations.ai.
+- **App Launcher**: Can open installed applications on your device.
+- **File Support**: Processes text files provided by the user.
+- **User-Friendly Interface**: Intuitive and easy-to-use design.
+
+## **Requirements**
+- **Android Version**: 4.1 (Jelly Bean) to 9 (Pie).
+- **Required Permissions**:
+  - Internet access.
+  - Read and write to external storage.
+  - Microphone usage for voice recognition.
+
+
+## **Usage**
+1. **Initial Setup**:
+   - Enter your Google Gemini API Key obtained from [Google AI Studio](https://aistudio.google.com/app/apikey).
+   - Enter your name to personalize the experience.
+2. **Interaction**:
+   - Type or speak your questions or commands.
+   - Use the microphone button for voice commands.
+   - Attach files for processing.
+3. **Additional Features**:
+   - Generate images based on prompt descriptions.
+   - Open installed applications on your device.
+   - Clear chat history whenever you want.
+   - AI Plugins support to add extended features like sending messages, making calls, and more.
+   - Gemini Model selector.
+
+## **Contributing**
+If you would like to contribute to the development of CreaProDroid:
+1. Fork the repository github.
+2. Create a new branch for your changes.
+3. Submit a pull request with a detailed description of your changes.
+
+## Credits
+- GitHub Copilot
+- Microsoft Copilot
+- Gemini
+- MarkdownToHtml
+- Google Fonts
+- OkHttp
+- okio
+- AndroidX Browser Custom Tabs
+- Pollinations.ai
+- Conscrypt

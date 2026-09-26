@@ -1,0 +1,111 @@
+Um aplicativo Android nativo desenvolvido de forma independente em Java para transferência de arquivos em rede local (LAN). O seu objetivo é oferecer compatibilidade com a descoberta de dispositivos e com a API de envio do protocolo LocalSend Protocol v2.2 em dispositivos antigos (do Android 2.3 ao Android 6.0 / API 9 à API 23). O projeto não referencia, não importa e não compila nenhum diretório de código-fonte do LocalSend.
+
+> **⚠️ NOTA:** 
+> A versão de compilação **Legacy20** voltada para Android 2.0 - 2.2 (API 5–8) é atualmente uma funcionalidade **experimental**. Devido à grave ausência de APIs nas bibliotecas TLS/JSSE e no ambiente de execução Dalvik das versões antigas do Android, esta versão requer o ambiente ou patch [Wolfius](https://github.com/gohoski/Wolfius) para ser executada e realizar transferências criptografadas HTTPS corretamente.
+> 
+> *Este projeto é um fork de [legacysend](https://github.com/Blithe-Chiang/legacysend).*
+
+## Funcionalidades
+
+* Descoberta de dispositivos, anúncios e gestão de respostas via multicast UDP.
+* Endpoints de registro HTTP/HTTPS compatíveis com LocalSend v2 (v2.2).
+* Suporte para codificação de transferência em blocos (`Chunked Transfer Encoding`).
+* Seleção, envio e recebimento de arquivos individuais e múltiplos.
+* Solicitação de confirmação (Aceitar / Recusar) antes do recebimento.
+* Validação de tokens em nível de arquivo, ID de sessão, IP de origem e impressão digital do certificado.
+* Envio e salvamento em disco via streaming contínuo sem carregar arquivos inteiros na memória.
+* Monitoramento do progresso geral, notificações de erro e suporte a cancelamento por ambas as partes.
+* Renomeação automática com sufixos `(1)`, `(2)` para evitar sobrescritas.
+* Compatibilidade com nomes de arquivos contendo caracteres chineses, espaços e símbolos especiais.
+* Serviço em primeiro plano para recebimento; a recriação da Activity não interrompe transferências em andamento.
+* Interface de usuário localizada em chinês simplificado.
+
+## Estrutura Principal do Projeto
+
+```text
+app/src/main/java/com/blithe/legacysend/
+├── LegacySendApp.java       Estado em nível de aplicação, tarefas em segundo plano e eventos de UI
+├── ReceiveService.java      Serviço de recebimento em primeiro plano
+├── discovery/               Descoberta via multicast UDP
+├── model/                   Modelos de dados para dispositivos e arquivos
+├── protocol/                Formatos do protocolo JSON do LocalSend (v2.2)
+├── security/                Identidade autoassinada, BKS KeyStore, mTLS, certificate pinning, SimpleX509Generator
+├── server/                  Endpoints HTTP/HTTPS (registro, preparação, upload, cancelamento)
+├── storage/                 Gestão de armazenamento com SAF, sistema de arquivos legado e lógica de renomeação
+├── transfer/                Cliente de envio HTTPS/HTTP, controle de progresso e cancelamento
+├── ui/                      Interface de usuário nativa com Views do Android
+└── util/                    Utilitários para transferência em streaming e controle de velocidade
+
+```
+
+O código-fonte é 100% escrito em Java, sem nenhuma dependência de Kotlin, Jetpack Compose, Flutter, Dart ou React Native. Utiliza Groovy DSL para o Gradle.
+
+## Compatibilidade e Adaptações para Android 2.3–6.0 (API 9–23)
+
+* **Cobertura do minSdk 9 (Android 2.3) até o Android 6.0 (API 23):** Especialmente adaptado para ambientes com hardware e firmware antigos.
+* **Geração de Certificados em API 9–17:** Implementação personalizada do `SimpleX509Generator` para resolver a ausência do `AndroidKeyStore` e superar a análise rigorosa de ASN.1/DER no OpenSSL / Conscrypt no Android 2.3–4.2.
+* **Formato BKS KeyStore:** Utiliza `BouncyCastle` (`BKS`) em API 9–17 para armazenar chaves privadas e certificados, evitando falhas de serialização `PKCS12` no Android 2.3.
+* **Correções de Estrutura ASN.1 / DER:** Envolve `AttributeTypeAndValue` em uma `SEQUENCE` dentro da hierarquia dos certificados e altera explicitamente o tipo de string do `commonName` (2.5.4.3) para `PrintableString` (0x13), resolvendo a exceção OpenSSL `ASN.1 encoding routines:OPENSSL_internal:WRONG_TAG`.
+* **Mitigação do Problema Y2K38:** Os certificados autoassinados em API 9–17 utilizam assinaturas `SHA1withRSA` com validade limitada a 10 anos para prevenir o estouro de timestamp em inteiros de 32 bits.
+* **Acesso a Arquivos Legados e SAF:** API 19–23 utiliza `ACTION_OPEN_DOCUMENT` com SAF, enquanto API 9–18 recorre a um gerenciador de arquivos interno para ler diretamente o armazenamento externo.
+* **Compatibilidade de Recebimento TLS no Android 4.4.2 (API 19–20):** O servidor TLS 1.2 no Kindle Android 4.4.2 suporta apenas cifrões CBC, incompatíveis com o cliente TLS Rust do LocalSend 1.17.0. Na API 19–20, o recebimento opera no modo `protocol: "http"` previsto pelo protocolo oficial. API 9–18 e API 21–23 mantêm a criptografia HTTPS para o recebimento e para todas as transferências de saída.
+* **Locais de Salvamento:** O local de salvamento é unificado na pasta pública `Download/LegacySend` em todas as versões suportadas (API 9–23).
+* **MulticastLock e Multithreading:** A escuta do multicast é habilitada após a aquisição do `MulticastLock`; todas as operações de rede e E/S de arquivos são executadas em threads em segundo plano.
+* **Processamento em Streaming:** As transferências utilizam um buffer de 32 KiB para transmissão em blocos (*chunked*), validando a coerência entre os bytes recebidos e o tamanho dos metadados.
+* **Sistema de Notificações:** O serviço em primeiro plano utiliza as notificações de sistema tradicionais em todo o intervalo da API 9 até a API 23.
+
+## Dependências
+
+Zero dependências de terceiros em tempo de execução. Utiliza exclusivamente o Android SDK, a biblioteca padrão do Java e `org.json` (incluída no sistema operacional).
+
+Dependências de Teste:
+
+* JUnit 4.13.2: Execução de testes apenas na JVM hospedeira (não empacotado no APK).
+* `org.json:json:20240303`: Implementação mock para testes unitários na JVM hospedeira (não empacotado no APK).
+
+## Status da Verificação
+
+### Funcionalidades Testadas e Verificadas
+
+* 12 testes unitários no ambiente hospedeiro: serialização do protocolo, metadados de múltiplos arquivos, caracteres especiais/chineses, aceitar/recusar/cancelar/timeout, renomeação, cálculo de hash SHA-256 e cópia em streaming.
+* Compilação via Gradle, inspeção do Lint e empacotamento do APK de debug.
+* Verificação do Manifest confirmando `minSdkVersion=9`, `compileSdkVersion=23` e `targetSdkVersion=23`.
+* Validação das assinaturas APK v1/v2 (assinatura v1 pronta para instalação no Android 2.3, 4.4.2 até o 6.0).
+* **Teste em Dispositivo Real Android 2.3.6 (API 9):** Certificado autoassinado gerado e carregado com sucesso (sem exceção `WRONG_TAG`), serviço HTTPS iniciado na porta 53317, cliente oficial do LocalSend detectado, upload *chunked* de arquivos únicos/múltiplos recebido e gravado em disco com hashes SHA-256 correspondentes.
+* **Teste em Dispositivo Real Kindle Android 4.4.2 (API 19):** Inicialização do app, seleção interna de arquivos, transferência concluída com sucesso para o Android 11 e recebimento de arquivos executado perfeitamente a partir do LocalSend 1.17.0 oficial com verificação de hash SHA-256.
+
+## Correção da Seleção de Arquivos para Kindle 4.4.2 e Sistemas Antigos
+
+O aplicativo DocumentsUI do firmware do Kindle mantém registros de downloads excluídos ou movidos, gerando exceções `FileNotFoundException` ao tentar abrir suas URIs `content://`. Nas APIs 9–20, é utilizado um gerenciador de arquivos interno que lista diretamente os arquivos reais e legíveis do armazenamento externo; as APIs 21–23 continuam utilizando o SAF do sistema.
+
+### Implementado, mas Aguardando Testes Aprofundados em Campo
+
+* Troca frequente de rede Wi-Fi em hardware real, restrições agressivas de economia de bateria de fabricantes e transferências de arquivos grandes no Android 5.0–6.0.
+
+### Funcionalidades Não Implementadas
+
+* API de Download Inverso do LocalSend (downloads via navegador); a API principal de upload do Android para o LocalSend não depende disso.
+* Funcionalidades secundárias como PIN, histórico, compartilhamento de área de transferência, temas, atualizações automáticas ou contas de usuário.
+* Varredura alternativa da sub-rede IP; atualmente depende da descoberta multicast padrão e da confirmação bidirecional `/register`.
+
+### Limitações do Ambiente de Desenvolvimento
+
+* O Android Emulator 36 na arquitetura Apple Silicon não oferece suporte a imagens de sistema ARMv7 QEMU2 para API 9 ou API 19.
+
+## Limite de Segurança para o Modo de Recebimento na API 19–20
+
+Devido à falta de ciphersuites em comum entre o TLS nativo do Android 4.4 e o LocalSend 1.17.0, o recebimento nas APIs 19–20 opera em modo HTTP, conforme permitido pela especificação do protocolo. Nessa modalidade, os arquivos e metadados não trafegam criptografados via TLS, embora as verificações de IP de origem, IDs de sessão aleatórios e tokens únicos por arquivo permaneçam ativos. Recomenda-se o uso exclusivo em redes locais confiáveis. Todas as transferências de saída do LegacySend e o recebimento nas APIs 9–18 / 21–23 mantêm a criptografia HTTPS e o certificate pinning.
+
+Para obter mais detalhes sobre as especificações e endpoints da API, consulte [docs/protocol.md](https://github.com/Blithe-Chiang/legacysend/blob/main/docs/protocol.md).
+
+## Contribuições
+
+Issues e Pull Requests são muito bem-vindos. O objetivo principal do LegacySend é fornecer uma solução leve, estável e interoperável com o LocalSend (v2.2) em dispositivos antigos (do Android 2.3 ao Android 6.0 / API 9 à API 23). A preservação da compatibilidade com sistemas legados tem prioridade sobre a adição de novas funcionalidades.
+
+### Diretrizes de Desenvolvimento
+
+* Manter uma implementação independente sem copiar ou importar código-fonte do LocalSend.
+* Utilizar estritamente Java e Views nativas do Android (evitar Kotlin, Jetpack Compose, Flutter ou Google Play Services).
+* Manter o foco de compatibilidade estritamente no intervalo de `minSdkVersion 9` a `targetSdkVersion 23`.
+* Executar todas as operações de rede e E/S de arquivos em threads em segundo plano utilizando processamento em streaming.
+* Verificar o comportamento nas APIs 9, 19 e no Android 6.0 antes de enviar alterações significativas.

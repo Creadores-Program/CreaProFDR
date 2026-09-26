@@ -1,0 +1,63 @@
+**CreaTV** est un client non officiel pour plateformes de *streaming* conçu spécifiquement pour les appareils sous **Android 2.3 à Android 10**. Il permet un accès léger et optimisé aux diffusions en direct.
+
+---
+
+## 🚀 Fonctionnalités et Compatibilité
+
+CreaTV prend en charge les plateformes de streaming les plus populaires :
+
+- 🟣 **Twitch**
+- 🟢 **Kick**
+- 🖤 **TikTok Live**
+- 🔴 **YouTube Live** *(Intégré via l'API iframe pour contourner les restrictions anti-bot)*
+
+---
+
+## ⚙️ Configuration Requise
+
+- **Système d'exploitation :** D'Android 2.3 (Gingerbread) à Android 10 (Quince Tart).
+- **Lecteur Vidéo Externe :** Il est **indispensable** de disposer d'un lecteur vidéo installé sur l'appareil pour la lecture des flux.
+
+---
+
+## 🧪 Tests et Lecteurs Recommandés
+
+- ❌ **Google Photos :** Risque d'erreurs ou de problèmes d'incompatibilité lors de la lecture sur d'anciennes versions d'Android.
+- ✅ **VLC Player (Recommandé pour Android 4.0+):** Il est fortement recommandé d'utiliser **VLC Player**, car il offre une plus grande stabilité, une plus grande compatibilité avec les formats réseau et des fonctionnalités avancées telles que Picture-in-Picture (PiP).
+> [!WARNING]
+> Présente des fermetures (crashs) inattendues sur **Android 2.3 à 3.2**
+- ✅ **MX Player (Recommandé pour Android 2.3–3.2):** Il fonctionne correctement et sans échecs dans les versions héritées où VLC génère des problèmes.
+
+---
+
+## 💬 Chat en Direct
+
+Actuellement, le chat en direct est **pris en charge uniquement pour Twitch**.
+
+### Comment utiliser le chat ?
+1. Cochez la case correspondante au chat dans l'application **CreaTV**.
+2. Lors du lancement d'un flux, ouvrez le lecteur vidéo (ex. VLC Player) et appuyez sur l'option **Réduire / Picture-in-Picture (PiP)**.
+3. Le lecteur vidéo s'affichera dans une petite fenêtre flottante tandis que le chat s'affichera et sera accessible en arrière-plan.
+
+---
+
+## ⚠️ Problèmes Connus et Notes Techniques
+
+### 1. Délais et Redémarrage du Backend (Render.com)
+Parfois, lors du lancement d'une vidéo YouTube ou d'un flux d'une autre plateforme, l'application peut afficher des **erreurs sans contexte** ou un **dépassement de délai (timeout)**.
+- **Cause :** Afin de proposer l'application de manière entièrement gratuite, le serveur backend est hébergé sur la plateforme **Render.com** (offre gratuite). Si l'instance se met en veille en raison d'une inactivité, elle prendra quelques secondes à redémarrer.
+- **Solution :** Si la diffusion échoue au premier essai, **attendez simplement 3 secondes et réessayez**.
+
+### 2. Performances sur les Anciennes Versions d'Android (Android 2.3 - 4.4)
+- Sur les versions Android 2.3 à 4.4 (Gingerbread / KitKat), des **ralentissements (lag) ou des bugs** peuvent survenir lors de la lecture sur YouTube Live. Cela est dû à l'API iframe de YouTube qui n'est pas optimisée pour la version obsolète du Webview de ces systèmes.
+
+---
+## 🎨 Crédits
+
+- **Design du logo :** zManuReal_
+
+---
+
+## 📄 Avertissement et Mentions Légales
+
+* **Avertissement :** CreaTV est un client non officiel et n'est en aucun cas affilié, sponsorisé, approuvé ou associé officiellement à Twitch, Kick, TikTok, YouTube ou Google.

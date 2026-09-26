@@ -7,7 +7,7 @@ const REPOSITORIES = [
     package: 'org.CreadoresProgram.CreaProDroid',
     categories: ['Utility', 'System', 'Internet', 'System'],
     antiFeatures: ['NonFreeNet'],
-    website: 'https://github.com/Creadores-Program/CreaProDroid',
+    website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: 'GithubResources'
   },
   {
@@ -15,14 +15,14 @@ const REPOSITORIES = [
     package: 'org.CreadoresProgram.CreaTv',
     categories: ['Multimedia', 'Internet'],
     antiFeatures: ['NonFreeNet'],
-    website: 'https://github.com/Creadores-Program/CreaTV',
+    website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: '.github/images'
   },
   {
     repo: 'Creadores-Program/legacysend',
     package: 'com.blithe.legacysend',
     categories: ['Connectivity', 'System', 'Utility'],
-    website: 'https://github.com/Creadores-Program/legacysend'
+    website: 'https://discord.com/invite/mrmHcwxXff'
   }
 ];
 

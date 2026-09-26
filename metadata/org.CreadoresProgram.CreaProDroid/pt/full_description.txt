@@ -1,0 +1,51 @@
+CreaProDroid é um assistente de inteligência artificial projetado especificamente para dispositivos Android antigos (versões 4.1 a 9). Este assistente utiliza a tecnologia do Google Gemini e Pollinations.ai, sendo otimizado para oferecer uma experiência fluida e útil em dispositivos com recursos limitados.
+Se este não for compatível, você pode testar o [CreaProPhone J2ME](https://github.com/Creadores-Program/CreaProPhone) com o J2ME Loader, que estende a compatibilidade para o Android 2.3.
+
+## **Recursos**
+- **Assistente de IA**: Responde a perguntas, realiza tarefas e oferece assistência personalizada.
+- **Compatibilidade com Android Antigo**: Projetado para funcionar em dispositivos com Android 4.1 a 9.
+- **Reconhecimento de Voz**: Permite interagir por meio de comandos de voz.
+- **Geração de Imagens**: Gera imagens com base em descrições fornecidas pelo usuário usando Pollinations.ai.
+- **Abertura de Aplicativos**: Pode abrir aplicativos instalados no dispositivo.
+- **Suporte a Arquivos**: Processa arquivos de texto fornecidos pelo usuário.
+- **Interface Amigável**: Design intuitivo e fácil de usar.
+
+## **Requisitos**
+- **Versão do Android**: 4.1 (Jelly Bean) a 9 (Pie).
+- **Permissões Necessárias**:
+  - Acesso à Internet.
+  - Leitura e escrita no armazenamento externo.
+  - Uso do microfone para reconhecimento de voz.
+
+## **Uso**
+1. **Configuração Inicial**:
+   - Insira sua Chave de API do Google Gemini obtida no [Google AI Studio](https://aistudio.google.com/app/apikey).
+   - Informe seu nome para personalizar a experiência.
+2. **Interação**:
+   - Digite ou fale suas perguntas ou comandos.
+   - Use o botão do microfone para comandos de voz.
+   - Anexe arquivos para processamento.
+3. **Funções Adicionais**:
+   - Gere imagens com base em descrições.
+   - Abra aplicativos instalados no seu dispositivo.
+   - Limpe o histórico de chat quando desejar.
+   - Com os Plugins de IA, você pode adicionar funcionalidades como enviar mensagens, fazer chamadas e muito mais.
+   - Seleção de Modelos do Gemini.
+
+## **Contribuição**
+Se você deseja contribuir para o desenvolvimento do CreaProDroid:
+1. Faça um fork do repositório.
+2. Faça suas alterações em uma nova branch.
+3. Envie um pull request com uma descrição detalhada das suas alterações.
+
+## Créditos
+- GitHub Copilot
+- Microsoft Copilot
+- Gemini
+- MarkdownToHtml
+- Google Fonts
+- OkHttp
+- okio
+- AndroidX Browser Custom Tabs
+- Pollinations.ai
+- Conscrypt

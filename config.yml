@@ -11,3 +11,4 @@ repo_keyalias: "CreaProFDRkey"
 repo_web_url: "https://github.com/Creadores-Program/CreaProFDR"
 
 use_androguard: false
+aapt2: /usr/bin/aapt2

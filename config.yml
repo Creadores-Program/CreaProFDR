@@ -9,6 +9,3 @@ language: "es"
 keystore: "CreaProFDR.keystore"
 repo_keyalias: "CreaProFDRkey"
 repo_web_url: "https://github.com/Creadores-Program/CreaProFDR"
-make_current_version_link: true
-build_v1_index: true
-make_v2_index: true

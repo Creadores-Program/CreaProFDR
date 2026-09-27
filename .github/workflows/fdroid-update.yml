@@ -49,8 +49,9 @@ jobs:
           if [ ! -f "config.yml" ]; then
             fdroid init --no-prompt
           fi
+          echo "sdk_path: $ANDROID_HOME" >> config.yml
           chmod 600 config.yml
-          fdroid update --create-metadata --use-androguard=false
+          fdroid update --create-metadata
 
       - name: Github Pages
         uses: peaceiris/actions-gh-pages@v4

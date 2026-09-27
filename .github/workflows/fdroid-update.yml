@@ -25,12 +25,18 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install fdroidserver
+      - name: Install fdroidserver & Android Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y fdroidserver google-android-build-tools-33.0.2-installer
-          pip install --upgrade --break-system-packages androguard
+          sudo apt-get install -y fdroidserver aapt zipalign apksigner
 
+      - name: Setup Android SDK (for AAPT2)
+        uses: android-actions/setup-android@v3
+
+      - name: Install AAPT2 via SDK
+        run: |
+          sdkmanager "build-tools;34.0.0"
+          echo "$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_PATH
       - name: Set Key
         run: echo "${{ secrets.CREAPROFDRKEYAPPB }}" | base64 -d > CreaProFDR.keystore
 

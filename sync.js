@@ -220,7 +220,7 @@ async function fetchChangelogs(repoConfig) {
   }
 }
 
-function generateCategoriesFile() {
+/*function generateCategoriesFile() {
   const categoriesPath = path.join(REPO_DIR, 'categories.txt');
 
   const allCategories = new Set();
@@ -238,7 +238,7 @@ function generateCategoriesFile() {
   const content = Array.from(allCategories).join('\n') + '\n';
   fs.writeFileSync(categoriesPath, content, 'utf8');
   console.log('[Categorías] Generado archivo categories.txt para compatibilidad con F-Droid Classic');
-}
+}*/
 
 async function run() {
   for (const item of REPOSITORIES) {
@@ -248,7 +248,7 @@ async function run() {
     await fetchChangelogs(item);
   }
 
-  generateCategoriesFile();
+  //generateCategoriesFile();
 
   appendPasswordsToConfig();
 }

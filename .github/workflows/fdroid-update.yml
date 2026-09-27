@@ -47,7 +47,9 @@ jobs:
           fi
           chmod 600 config.yml
           fdroid update --create-metadata
-
+      - name: Gen Key F-droid
+        run: |
+          fdroid read-keys
       - name: Prepare dist
         run: |
           mkdir -p dist

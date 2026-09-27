@@ -5,7 +5,7 @@ const REPOSITORIES = [
   {
     repo: 'Creadores-Program/CreaProDroid',
     package: 'org.CreadoresProgram.CreaProDroid',
-    categories: ['Utility', 'System', 'Internet', 'System'],
+    categories: ['Utility', 'System', 'Internet'],
     antiFeatures: ['NonFreeNet'],
     website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: 'GithubResources'

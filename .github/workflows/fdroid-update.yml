@@ -30,13 +30,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y fdroidserver aapt zipalign apksigner
 
-      - name: Setup Android SDK (for AAPT2)
-        uses: android-actions/setup-android@v3
-
-      - name: Install AAPT2 via SDK
+      - name: Add Android Build-Tools to PATH
         run: |
-          sdkmanager "build-tools;34.0.0"
-          echo "$ANDROID_HOME/build-tools/34.0.0" >> $GITHUB_PATH
+          # Detecta automáticamente la versión más reciente de build-tools preinstalada en GitHub Actions
+          BUILD_TOOLS_PATH=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n1)
+          echo "$BUILD_TOOLS_PATH" >> $GITHUB_PATH
+          echo "Usando Build-Tools en: $BUILD_TOOLS_PATH"
+
       - name: Set Key
         run: echo "${{ secrets.CREAPROFDRKEYAPPB }}" | base64 -d > CreaProFDR.keystore
 

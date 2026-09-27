@@ -225,6 +225,8 @@ async function generateSimplePngIcon(repoConfig) {
   if (!repoConfig.customIconColor) return;
 
   const appId = getAppId(repoConfig);
+  const repoIconsDir = path.join(REPO_DIR, 'icons');
+  const repoIconPath = path.join(repoIconsDir, `${appId}.png`);
   const iconPath = path.join(METADATA_DIR, `${appId}.png`);
 
   if (fs.existsSync(iconPath)) {
@@ -252,6 +254,7 @@ async function generateSimplePngIcon(repoConfig) {
 
     const buffer = PNG.sync.write(png);
     fs.writeFileSync(iconPath, buffer);
+    fs.writeFileSync(repoIconPath, buffer);
     console.log(`[Icono] Generado PNG de color plano para ${appId} en metadata/`);
   } catch (error) {
     console.error(`Error generando icono plano para ${appId}:`, error);

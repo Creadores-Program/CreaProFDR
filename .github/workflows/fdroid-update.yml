@@ -29,7 +29,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y fdroidserver python3-pip
-          pip install --upgrade --break-system-packages androguar
+          pip install --upgrade --break-system-packages androguard
 
       - name: Set Key
         run: echo "${{ secrets.CREAPROFDRKEYAPPB }}" | base64 -d > CreaProFDR.keystore

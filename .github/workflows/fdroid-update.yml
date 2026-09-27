@@ -51,6 +51,7 @@ jobs:
           fi
           echo "sdk_path: $ANDROID_HOME" >> config.yml
           chmod 600 config.yml
+          sudo sed -i 's/scan_apk_androguard(apk, apk_file)/scan_apk_aapt(apk, apk_file)/g' /usr/lib/python3/dist-packages/fdroidserver/update.py
           fdroid update --create-metadata
 
       - name: Github Pages

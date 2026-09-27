@@ -48,10 +48,16 @@ jobs:
           chmod 600 config.yml
           fdroid update --create-metadata
 
+      - name: Prepare dist
+        run: |
+          mkdir -p dist
+
+          cp -r repo dist/
+
+          cp -r stats dist/
       - name: Github Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./repo
-          destination_dir: repo
+          publish_dir: ./dist
           keep_files: false

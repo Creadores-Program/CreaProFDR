@@ -47,16 +47,14 @@ jobs:
           fi
           chmod 600 config.yml
           fdroid update --create-metadata
-      - name: Gen Key F-droid
-        run: |
-          fdroid read-keys
       - name: Prepare dist
         run: |
           mkdir -p dist
+          mkdir -p dist/stats
 
           cp -r repo dist/
 
-          cp -r stats dist/
+          keytool -exportcert -alias CreaProFDRkey -keystore CreaProFDR.keystore -storepass "${{ secrets.CREAPROFDRKEYCONTRE }}" | xxd -p | tr -d '\n' > dist/stats/pubkey
       - name: Github Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

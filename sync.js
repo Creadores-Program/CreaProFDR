@@ -221,8 +221,7 @@ async function fetchChangelogs(repoConfig) {
 }
 
 function generateCategoriesFile() {
-  const repoCategoriesDir = path.join(REPO_DIR);
-  const categoriesPath = path.join(repoCategoriesDir, 'categories.txt');
+  const categoriesPath = path.join(METADATA_DIR, 'categories.txt');
 
   const allCategories = new Set();
   

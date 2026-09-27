@@ -34,7 +34,6 @@ jobs:
         run: |
           BUILD_TOOLS_PATH=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n1)
           echo "$BUILD_TOOLS_PATH" >> $GITHUB_PATH
-          echo "Usando Build-Tools en: $BUILD_TOOLS_PATH"
 
       - name: Set Key
         run: echo "${{ secrets.CREAPROFDRKEYAPPB }}" | base64 -d > CreaProFDR.keystore
@@ -51,7 +50,7 @@ jobs:
             fdroid init --no-prompt
           fi
           chmod 600 config.yml
-          fdroid update --create-metadata
+          fdroid update --create-metadata --use-androguard=false
 
       - name: Github Pages
         uses: peaceiris/actions-gh-pages@v4

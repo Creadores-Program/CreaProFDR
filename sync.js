@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { PNG } from 'pngjs';
 
 const REPOSITORIES = [
   {
@@ -18,12 +19,13 @@ const REPOSITORIES = [
     website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: '.github/images'
   },
-  /*{
+  {
     repo: 'Creadores-Program/legacysend',
     package: 'com.blithe.legacysend',
+    customIconColor: [21, 101, 192],
     categories: ['Connectivity', 'System', 'Utility'],
     website: 'https://discord.com/invite/mrmHcwxXff'
-  }*/
+  }
 ];
 
 const REPO_DIR = path.join(process.cwd(), 'repo');
@@ -219,11 +221,48 @@ async function fetchChangelogs(repoConfig) {
     console.error(`Error guardando changelogs de ${repo}:`, error);
   }
 }
+async function generateSimplePngIcon(repoConfig) {
+  if (!repoConfig.customIconColor) return;
+
+  const appId = getAppId(repoConfig);
+  const iconPath = path.join(METADATA_DIR, `${appId}.png`);
+
+  if (fs.existsSync(iconPath)) {
+    console.log(`[Icono] El icono estático para ${appId} ya existe. Omitiendo.`);
+    return;
+  }
+
+  try {
+    const SIZE = 512;
+    const png = new PNG({ width: SIZE, height: SIZE });
+
+    const [r, g, b] = Array.isArray(repoConfig.customIconColor)
+      ? repoConfig.customIconColor
+      : [21, 101, 192];
+
+    for (let y = 0; y < SIZE; y++) {
+      for (let x = 0; x < SIZE; x++) {
+        const idx = (SIZE * y + x) << 2;
+        png.data[idx]     = r;
+        png.data[idx + 1] = g;
+        png.data[idx + 2] = b;
+        png.data[idx + 3] = 255;
+      }
+    }
+
+    const buffer = PNG.sync.write(png);
+    fs.writeFileSync(iconPath, buffer);
+    console.log(`[Icono] Generado PNG de color plano para ${appId} en metadata/`);
+  } catch (error) {
+    console.error(`Error generando icono plano para ${appId}:`, error);
+  }
+}
 
 async function run() {
   for (const item of REPOSITORIES) {
     await fetchAllApks(item);
     await generateAppMetadata(item);
+    await generateSimplePngIcon(item);
     await fetchScreenshots(item);
     await fetchChangelogs(item);
   }

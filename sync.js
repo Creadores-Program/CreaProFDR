@@ -220,6 +220,27 @@ async function fetchChangelogs(repoConfig) {
   }
 }
 
+function generateCategoriesFile() {
+  const repoCategoriesDir = path.join(REPO_DIR);
+  const categoriesPath = path.join(repoCategoriesDir, 'categories.txt');
+
+  const allCategories = new Set();
+  
+  for (const item of REPOSITORIES) {
+    if (Array.isArray(item.categories)) {
+      item.categories.forEach(c => allCategories.add(c));
+    }
+  }
+
+  if (allCategories.size === 0) {
+    ['Utility', 'System', 'Internet', 'Multimedia', 'Connectivity'].forEach(c => allCategories.add(c));
+  }
+
+  const content = Array.from(allCategories).join('\n') + '\n';
+  fs.writeFileSync(categoriesPath, content, 'utf8');
+  console.log('[Categorías] Generado archivo categories.txt para compatibilidad con F-Droid Classic');
+}
+
 async function run() {
   for (const item of REPOSITORIES) {
     await fetchAllApks(item);
@@ -227,6 +248,8 @@ async function run() {
     await fetchScreenshots(item);
     await fetchChangelogs(item);
   }
+
+  generateCategoriesFile();
 
   appendPasswordsToConfig();
 }

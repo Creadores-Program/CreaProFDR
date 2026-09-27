@@ -28,12 +28,7 @@ jobs:
       - name: Install fdroidserver
         run: |
           sudo apt-get update
-          sudo apt-get install -y fdroidserver
-
-      - name: Add Android Build-Tools to PATH
-        run: |
-          BUILD_TOOLS_PATH=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n1)
-          echo "$BUILD_TOOLS_PATH" >> $GITHUB_PATH
+          sudo apt-get install -y fdroidserver python3-pip
 
       - name: Set Key
         run: echo "${{ secrets.CREAPROFDRKEYAPPB }}" | base64 -d > CreaProFDR.keystore
@@ -49,9 +44,6 @@ jobs:
           if [ ! -f "config.yml" ]; then
             fdroid init --no-prompt
           fi
-          echo "sdk_path: $ANDROID_HOME" >> config.yml
-          echo "aapt: $BUILD_TOOLS_PATH/aapt" >> config.yml
-          echo "aapt2: $BUILD_TOOLS_PATH/aapt2" >> config.yml
           chmod 600 config.yml
           fdroid update --create-metadata
 

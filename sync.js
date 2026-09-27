@@ -18,12 +18,12 @@ const REPOSITORIES = [
     website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: '.github/images'
   },
-  {
+  /*{
     repo: 'Creadores-Program/legacysend',
     package: 'com.blithe.legacysend',
     categories: ['Connectivity', 'System', 'Utility'],
     website: 'https://discord.com/invite/mrmHcwxXff'
-  }
+  }*/
 ];
 
 const REPO_DIR = path.join(process.cwd(), 'repo');

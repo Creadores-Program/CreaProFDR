@@ -227,6 +227,9 @@ async function generateSimplePngIcon(repoConfig) {
   const appId = getAppId(repoConfig);
   const repoIconsDir = path.join(REPO_DIR, 'icons');
   const repoIconPath = path.join(repoIconsDir, `${appId}.png`);
+  if (!fs.existsSync(repoIconsDir)) {
+    fs.mkdirSync(repoIconsDir, { recursive: true });
+  }
   const iconPath = path.join(METADATA_DIR, `${appId}.png`);
 
   if (fs.existsSync(iconPath)) {

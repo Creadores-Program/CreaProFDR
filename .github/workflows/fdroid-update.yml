@@ -122,27 +122,13 @@ jobs:
                        "inline": true
                      },
                      {
-                       "name": "📲 Enlace Directo F-Droid",
-                       "value": "<'"$REPO_FDROID"'>",
+                       "name": "🔗 Accesos Directos",
+                       "value": "📲 [Añadir a F-Droid (App)]('"$REPO_FDROID"')\n🌐 [Explorar Repositorio (Web)]('"$REPO_HTTPS"')",
                        "inline": false
                      }
                    ],
                    "footer": {
                      "text": "F-Droid Repository Manager"
                    }
-                 }],
-                 "components": [
-                   {
-                     "type": 1,
-                     "components": [
-                       {
-                         "type": 2,
-                         "style": 5,
-                         "label": "Ver en el Navegador",
-                         "url": "'"$REPO_HTTPS"'",
-                         "emoji": { "name": "🌐" }
-                       }
-                     ]
-                   }
-                 ]
+                 }]
                }' "$DISCORD_WEBHOOK_URL"

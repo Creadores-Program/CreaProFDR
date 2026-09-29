@@ -47,6 +47,10 @@ jobs:
           fi
           chmod 600 config.yml
           fdroid update --create-metadata
+      - name: Count Apps
+        run: |
+          APP_COUNT=$(jq '.apps | length' repo/index-v1.json 2>/dev/null || echo "0")
+          echo "TOTAL_APPS=$APP_COUNT" >> $GITHUB_ENV
       - name: Prepare dist
         run: |
           mkdir -p dist
@@ -68,6 +72,8 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           DISPATCH_ACTION: ${{ github.event.action }}
           APP_NAME: ${{ github.event.client_payload.app_name }}
+          TOTAL_APPS: ${{ env.TOTAL_APPS }}
+          PAGES_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
         run: |
           case "$EVENT_NAME" in
             "schedule")
@@ -97,6 +103,9 @@ jobs:
               ;;
           esac
 
+          REPO_HTTPS="${PAGES_URL}/repo"
+          REPO_FDROID=$(echo "$REPO_HTTPS" | sed 's|^https://|fdroidrepo://|')
+
           curl -H "Content-Type: application/json" \
                -X POST \
                -d '{
@@ -106,8 +115,36 @@ jobs:
                    "title": "'"$TITULO"'",
                    "description": "'"$DETALLE"'",
                    "color": '$COLOR',
+                   "fields": [
+                     {
+                       "name": "📱 Apps Disponibles",
+                       "value": "**'"$TOTAL_APPS"'** aplicaciones en total",
+                       "inline": true
+                     }
+                   ],
                    "footer": {
                      "text": "F-Droid Repository Manager"
                    }
-                 }]
+                 }],
+                 "components": [
+                   {
+                     "type": 1,
+                     "components": [
+                       {
+                         "type": 2,
+                         "style": 5,
+                         "label": "Añadir a F-Droid",
+                         "url": "'"$REPO_FDROID"'",
+                         "emoji": { "name": "📲" }
+                       },
+                       {
+                         "type": 2,
+                         "style": 5,
+                         "label": "Ver en el Navegador",
+                         "url": "'"$REPO_HTTPS"'",
+                         "emoji": { "name": "🌐" }
+                       }
+                     ]
+                   }
+                 ]
                }' "$DISCORD_WEBHOOK_URL"

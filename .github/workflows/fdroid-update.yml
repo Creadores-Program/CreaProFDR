@@ -120,6 +120,11 @@ jobs:
                        "name": "📱 Apps Disponibles",
                        "value": "**'"$TOTAL_APPS"'** aplicaciones en total",
                        "inline": true
+                     },
+                     {
+                       "name": "📲 Enlace Directo F-Droid",
+                       "value": "<'"$REPO_FDROID"'>",
+                       "inline": false
                      }
                    ],
                    "footer": {
@@ -130,13 +135,6 @@ jobs:
                    {
                      "type": 1,
                      "components": [
-                       {
-                         "type": 2,
-                         "style": 5,
-                         "label": "Añadir a F-Droid",
-                         "url": "'"$REPO_FDROID"'",
-                         "emoji": { "name": "📲" }
-                       },
                        {
                          "type": 2,
                          "style": 5,

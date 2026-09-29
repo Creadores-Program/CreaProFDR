@@ -64,7 +64,7 @@ jobs:
       - name: Discord Ad
         if: success()
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.FDROIDSTATUS }}
           EVENT_NAME: ${{ github.event_name }}
           DISPATCH_ACTION: ${{ github.event.action }}
           APP_NAME: ${{ github.event.client_payload.app_name }}

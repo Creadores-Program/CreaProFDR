@@ -77,7 +77,7 @@ jobs:
               ;;
             "workflow_dispatch")
               TITULO="👤 Actualización Manual"
-              DETALLE="Un administrador ejecutó manualmente el flujo de actualización (`$GITHUB_ACTOR`)."
+              DETALLE="Un administrador ejecutó manualmente el flujo de actualización ($GITHUB_ACTOR)."
               COLOR=15105570
               ;;
             "repository_dispatch")

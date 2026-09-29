@@ -61,3 +61,53 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           keep_files: false
+      - name: Discord Ad
+        if: success()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          EVENT_NAME: ${{ github.event_name }}
+          DISPATCH_ACTION: ${{ github.event.action }}
+          APP_NAME: ${{ github.event.client_payload.app_name }}
+        run: |
+          case "$EVENT_NAME" in
+            "schedule")
+              TITULO="📅 Mantenimiento Programado (Quincenal)"
+              DETALLE="Se ejecutó la actualización automática programada del repositorio."
+              COLOR=3447003
+              ;;
+            "workflow_dispatch")
+              TITULO="👤 Actualización Manual"
+              DETALLE="Un administrador ejecutó manualmente el flujo de actualización (`$GITHUB_ACTOR`)."
+              COLOR=15105570
+              ;;
+            "repository_dispatch")
+              if [ -n "$APP_NAME" ]; then
+                TITULO="🚀 Nueva versión de $APP_NAME"
+                DETALLE="Se actualizó la aplicación **$APP_NAME** vía disparo automático."
+              else
+                TITULO="📦 Actualización por App ($DISPATCH_ACTION)"
+                DETALLE="Se recibió un evento de actualización individual de aplicación."
+              fi
+              COLOR=3066993
+              ;;
+            *)
+              TITULO="🔄 Repositorio Actualizado"
+              DETALLE="Se ha actualizado el repositorio F-Droid."
+              COLOR=9807270
+              ;;
+          esac
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d '{
+                 "username": "F-Droid",
+                 "avatar_url": "https://fdroid.org/assets/fdroid-logo.png",
+                 "embeds": [{
+                   "title": "'"$TITULO"'",
+                   "description": "'"$DETALLE"'",
+                   "color": '$COLOR',
+                   "footer": {
+                     "text": "F-Droid Repository Manager"
+                   }
+                 }]
+               }' "$DISCORD_WEBHOOK_URL"

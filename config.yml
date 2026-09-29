@@ -4,6 +4,9 @@ repo_description: "Repositorio oficial de Creadores Program: aplicaciones de IA,
 
 repo_url: "https://creadores-program.github.io/CreaProFDR/repo"
 
+serverwebroot: ""
+author_name: "Creadores Program Team"
+show_anti_features: true
 language: "es"
 
 keystore: "CreaProFDR.keystore"

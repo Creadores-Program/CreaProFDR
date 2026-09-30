@@ -46,7 +46,7 @@ jobs:
             fdroid init --no-prompt
           fi
           chmod 600 config.yml
-          fdroid update --create-metadata
+          fdroid update --create-metadata --use-date-from-apks
       - name: Count Apps
         run: |
           APP_COUNT=$(jq '.apps | length' repo/index-v1.json 2>/dev/null || echo "0")

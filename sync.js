@@ -5,7 +5,7 @@ const REPOSITORIES = [
   {
     repo: 'Creadores-Program/CreaProDroid',
     package: 'org.CreadoresProgram.CreaProDroid',
-    categories: ['Utility', 'System', 'Internet'],
+    categories: ['AI Chat', 'Utility', 'System', 'Internet'],
     antiFeatures: ['NonFreeNet'],
     website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: 'GithubResources'
@@ -21,7 +21,13 @@ const REPOSITORIES = [
   {
     repo: 'Creadores-Program/legacysend',
     package: 'com.blithe.legacysend',
-    categories: ['Connectivity', 'System', 'Utility'],
+    categories: ['Connectivity', 'System', 'Utility', 'File Transfer'],
+    website: 'https://discord.com/invite/mrmHcwxXff'
+  },
+  {
+    repo: 'Creadores-Program/F-droid-Classic-Crea',
+    package: 'org.fdroid.fdroid',
+    categories: ['App Store & Updater', 'Internet', 'System', 'Utility'],
     website: 'https://discord.com/invite/mrmHcwxXff'
   }
 ];

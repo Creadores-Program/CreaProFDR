@@ -1,0 +1,22 @@
+# F-Droid Classic (Crea Fork)
+
+F-Droid Classic (Crea Fork) es un cliente alternativo de F-Droid desarrollado y mantenido por Creadores-Program. Esta versión está basada en la interfaz clásica pre-1.0 del cliente oficial, enfocada en ofrecer una experiencia ágil, clara y directa para usuarios que prefieren la funcionalidad sobre los diseños modernos basados en tarjetas.
+
+---
+
+## 🌟 Características Principales
+
+* **Soporte TLS 1.2 y 1.3:** Incorpora soporte actualizado para protocolos de seguridad modernos, permitiendo la conexión a repositorios F-Droid en dispositivos antiguos desde Android 2.3+.
+* **Interfaz Clásica Ligera:** Mantiene un diseño intuitivo y directo donde toda la información clave del paquete, permisos e historial de versiones está visible sin menús ocultos.
+* **Sin Anuncios ni Telemetría:** Respeta al 100% la privacidad del usuario, manteniendo la filosofía FOSS sin librerías propietarias de rastreo.
+* **Rendimiento Optimizado:** Consume menos recursos de memoria y procesador, ideal para hardware limitado o consolas y dispositivos heredados.
+* **Funciones Avanzadas:** Soporte completo para index-v1, Privileged Extension para instalaciones en segundo plano, registro de cambios integrado y visor de capturas de pantalla.
+
+---
+
+## 💬 Comunidad y Soporte
+
+Si deseas reportar errores, sugerir mejoras o estar al tanto de las últimas actualizaciones del proyecto:
+
+* **Repositorio en GitHub:** https://github.com/Creadores-Program/F-droid-Classic-Crea
+* **Servidor de Discord:** https://discord.com/invite/mrmHcwxXff

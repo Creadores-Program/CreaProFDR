@@ -151,7 +151,6 @@ async function fetchAllApks(repoConfig) {
       const tag = release.tag_name || 'unknown';
       const repoName = repo.split('/')[1];
       const apkAssets = release.assets.filter(asset => asset.name.endsWith('.apk'));
-
       const releaseDate = new Date(release.published_at || release.created_at);
 
       if (apkAssets.length === 0) continue;
@@ -167,7 +166,7 @@ async function fetchAllApks(repoConfig) {
           fs.writeFileSync(filePath, Buffer.from(arrayBuffer));
           console.log(`Guardado: ${uniqueFileName}`);
         } else {
-          console.log(`El archivo ${uniqueFileName} ya existe. Omitiendo descarga.`);
+          console.log(`El archivo ${uniqueFileName} ya existe.`);
         }
 
         fs.utimesSync(filePath, releaseDate, releaseDate);

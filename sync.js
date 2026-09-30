@@ -80,16 +80,6 @@ async function generateAppMetadata(repoConfig) {
     const donateYaml = donate ? `Donate: ${donate}\n` : '';
     const websiteYaml = website ? `WebSite: ${website}\n` : `WebSite: ${data.html_url}\n`;
 
-    const relRes = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, { headers: getHeaders() });
-    let addedYaml = '';
-    if (relRes.ok) {
-      const latestRelease = await relRes.json();
-      if (latestRelease.published_at) {
-        const releaseDate = latestRelease.published_at.split('T')[0];
-        addedYaml = `\nBuilds:\n  - versionName: '${latestRelease.tag_name.replace(/^v/, '')}'\n    added: ${releaseDate}\n`;
-      }
-    }
-
     const yamlContent = `AuthorName: "Creadores Program"
 Categories:
 ${categoriesYaml}
@@ -97,10 +87,11 @@ ${antiFeaturesYaml}${donateYaml}${websiteYaml}
 License: ${data.license?.spdx_id || 'NOASSERTION'}
 SourceCode: ${data.html_url}
 IssueTracker: ${data.html_url}/issues
-Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"${addedYaml}`;
+Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"
+`;
 
     fs.writeFileSync(path.join(METADATA_DIR, `${appId}.yml`), yamlContent, 'utf8');
-    console.log(`[Metadatos] Generado ${appId}.yml con fecha de lanzamiento`);
+    console.log(`[Metadatos] Generado ${appId}.yml`);
   } catch (error) {
     console.error(`Error creando metadatos para ${repo}:`, error);
   }

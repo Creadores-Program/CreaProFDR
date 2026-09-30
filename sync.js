@@ -205,30 +205,15 @@ async function fetchChangelogs(repoConfig) {
     if (!res.ok) return;
 
     const releases = await res.json();
-    if (!Array.isArray(releases)) return;
+    if (!Array.isArray(releases) || releases.length === 0) return;
 
-    const changelogDir = path.join(METADATA_DIR, appId, 'fastlane', 'metadata', 'android', 'es', 'changelogs');
-
-    for (const release of releases) {
-      if (!release.body || release.body.trim() === '') continue;
-
-      const changelogContent = release.body.trim();
-      fs.mkdirSync(changelogDir, { recursive: true });
-
-      const cleanTag = release.tag_name.replace(/^v/, '');
-      
-      const fileName = `${cleanTag}.txt`;
-      const filePath = path.join(changelogDir, fileName);
-
-      if (!fs.existsSync(filePath)) {
-        fs.writeFileSync(filePath, changelogContent, 'utf8');
-        console.log(`[Changelog] Creado ${fileName} para ${appId} en Fastlane`);
-      }
-    }
+    const changelogDir = path.join(METADATA_DIR, appId, 'fastlane', 'metadata', 'android', 'es-ES', 'changelogs');
+    fs.mkdirSync(changelogDir, { recursive: true });
 
     if (releases[0] && releases[0].body) {
       const defaultPath = path.join(changelogDir, 'default.txt');
       fs.writeFileSync(defaultPath, releases[0].body.trim(), 'utf8');
+      console.log(`[Changelog] Creado default.txt para ${appId}`);
     }
   } catch (error) {
     console.error(`Error guardando changelogs de ${repo}:`, error);

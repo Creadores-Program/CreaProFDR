@@ -80,19 +80,13 @@ async function generateAppMetadata(repoConfig) {
     const donateYaml = donate ? `Donate: ${donate}\n` : '';
     const websiteYaml = website ? `WebSite: ${website}\n` : `WebSite: ${data.html_url}\n`;
 
-    const relRes = await fetch(`https://api.github.com/repos/${repo}/releases?per_page=2`, { headers: getHeaders() });
-    let releaseNotesYaml = '';
-    
+    const relRes = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, { headers: getHeaders() });
+    let addedYaml = '';
     if (relRes.ok) {
-      const releases = await relRes.json();
-      if (Array.isArray(releases) && releases.length > 0) {
-        releaseNotesYaml = 'ReleaseNotes:\n';
-        for (const rel of releases) {
-          if (!rel.body || !rel.tag_name) continue;
-          const cleanTag = rel.tag_name.replace(/^v/, '');
-          const formattedBody = rel.body.trim().split('\n').map(line => `    ${line}`).join('\n');
-          releaseNotesYaml += `  ${cleanTag}: |\n${formattedBody}\n`;
-        }
+      const latestRelease = await relRes.json();
+      if (latestRelease.published_at) {
+        const releaseDate = latestRelease.published_at.split('T')[0];
+        addedYaml = `\nBuilds:\n  - versionName: '${latestRelease.tag_name.replace(/^v/, '')}'\n    added: ${releaseDate}\n`;
       }
     }
 
@@ -103,11 +97,10 @@ ${antiFeaturesYaml}${donateYaml}${websiteYaml}
 License: ${data.license?.spdx_id || 'NOASSERTION'}
 SourceCode: ${data.html_url}
 IssueTracker: ${data.html_url}/issues
-Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"
-${releaseNotesYaml}`;
+Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"${addedYaml}`;
 
     fs.writeFileSync(path.join(METADATA_DIR, `${appId}.yml`), yamlContent, 'utf8');
-    console.log(`[Metadatos] Generado ${appId}.yml`);
+    console.log(`[Metadatos] Generado ${appId}.yml con fecha de lanzamiento`);
   } catch (error) {
     console.error(`Error creando metadatos para ${repo}:`, error);
   }
@@ -212,11 +205,52 @@ function appendPasswordsToConfig() {
   }
 }
 
+async function fetchChangelogs(repoConfig) {
+  const repo = typeof repoConfig === 'string' ? repoConfig : repoConfig.repo;
+  const appId = getAppId(repoConfig);
+  const url = `https://api.github.com/repos/${repo}/releases?per_page=50`;
+
+  try {
+    const res = await fetch(url, { headers: getHeaders() });
+    if (!res.ok) return;
+
+    const releases = await res.json();
+    if (!Array.isArray(releases)) return;
+
+    const changelogDir = path.join(METADATA_DIR, appId, 'fastlane', 'metadata', 'android', 'es', 'changelogs');
+
+    for (const release of releases) {
+      if (!release.body || release.body.trim() === '') continue;
+
+      const changelogContent = release.body.trim();
+      fs.mkdirSync(changelogDir, { recursive: true });
+
+      const cleanTag = release.tag_name.replace(/^v/, '');
+      
+      const fileName = `${cleanTag}.txt`;
+      const filePath = path.join(changelogDir, fileName);
+
+      if (!fs.existsSync(filePath)) {
+        fs.writeFileSync(filePath, changelogContent, 'utf8');
+        console.log(`[Changelog] Creado ${fileName} para ${appId} en Fastlane`);
+      }
+    }
+
+    if (releases[0] && releases[0].body) {
+      const defaultPath = path.join(changelogDir, 'default.txt');
+      fs.writeFileSync(defaultPath, releases[0].body.trim(), 'utf8');
+    }
+  } catch (error) {
+    console.error(`Error guardando changelogs de ${repo}:`, error);
+  }
+}
+
 async function run() {
   for (const item of REPOSITORIES) {
     await fetchAllApks(item);
     await generateAppMetadata(item);
     await fetchScreenshots(item);
+    await fetchChangelogs(item);
   }
 
   appendPasswordsToConfig();

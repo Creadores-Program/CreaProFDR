@@ -26,7 +26,7 @@ const REPOSITORIES = [
   },
   {
     repo: 'Creadores-Program/F-droid-Classic-Crea',
-    package: 'org.fdroid.fdroid',
+    package: 'eu.bubu1.fdroidclassic',
     categories: ['App Store & Updater', 'Internet', 'System', 'Utility'],
     website: 'https://discord.com/invite/mrmHcwxXff'
   }

@@ -41,6 +41,8 @@ jobs:
           CREAPROFDRKEYCONTRE: ${{ secrets.CREAPROFDRKEYCONTRE }}
 
       - name: Update F-Droid
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ ! -f "config.yml" ]; then
             fdroid init --no-prompt

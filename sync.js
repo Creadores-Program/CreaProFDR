@@ -8,7 +8,8 @@ const REPOSITORIES = [
     categories: ['AI Chat', 'Utility', 'System', 'Internet'],
     antiFeatures: ['NonFreeNet', 'TetheredNet'],
     website: 'https://discord.com/invite/mrmHcwxXff',
-    screenshotsDir: 'GithubResources'
+    screenshotsDir: 'GithubResources',
+    translation: 'main/app/src/main/res'
   },
   {
     repo: 'Creadores-Program/CreaTV',
@@ -16,13 +17,16 @@ const REPOSITORIES = [
     categories: ['Multimedia', 'Internet'],
     antiFeatures: ['NonFreeNet', 'TetheredNet'],
     website: 'https://discord.com/invite/mrmHcwxXff',
-    screenshotsDir: '.github/images'
+    screenshotsDir: '.github/images',
+    translation: 'main/app/src/main/res'
   },
   {
     repo: 'Creadores-Program/legacysend',
+    name: 'Legacysend (旧版互传)',
     package: 'com.blithe.legacysend',
     categories: ['Connectivity', 'System', 'Utility', 'File Transfer'],
-    website: 'https://discord.com/invite/mrmHcwxXff'
+    website: 'https://discord.com/invite/mrmHcwxXff',
+    translation: 'main/app/src/main/res'
   },
   {
     repo: 'Creadores-Program/F-droid-Classic-Crea',
@@ -65,6 +69,8 @@ async function generateAppMetadata(repoConfig) {
   const antiFeatures = repoConfig.antiFeatures || [];
   const donate = repoConfig.donate || '';
   const website = repoConfig.website || '';
+  const translation = repoConfig.translation || '';
+  const name = repoConfig.name || '';
 
   try {
     const res = await fetch(`https://api.github.com/repos/${repo}`, { headers: getHeaders() });
@@ -79,12 +85,14 @@ async function generateAppMetadata(repoConfig) {
 
     const donateYaml = donate ? `Donate: ${donate}\n` : '';
     const websiteYaml = website ? `WebSite: ${website}\n` : `WebSite: ${data.html_url}\n`;
+    const translationYaml = translation ? `Translation: ${data.html_url}/tree/${translation}\n` : '';
+    const nameYaml = name ? `Name: ${name}\n` : '';
     const requiresRoot = repoConfig.requiresRoot ? 'RequiresRoot: yes\n' : '';
 
     const yamlContent = `AuthorName: "Creadores Program"
 Categories:
 ${categoriesYaml}
-${antiFeaturesYaml}${requiresRoot}${donateYaml}${websiteYaml}
+${antiFeaturesYaml}${requiresRoot}${donateYaml}${websiteYaml}${translationYaml}${nameYaml}
 License: ${data.license?.spdx_id || 'NOASSERTION'}
 SourceCode: ${data.html_url}
 IssueTracker: ${data.html_url}/issues

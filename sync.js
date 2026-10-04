@@ -90,9 +90,13 @@ SourceCode: ${data.html_url}
 IssueTracker: ${data.html_url}/issues
 Changelog: ${data.html_url}/releases
 Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"
+RepoType: git
+Repo: ${data.clone_url}
 UpdateCheckMode: Tags
 AutoUpdateMode: Version %v
 Binaries: ${data.html_url}/releases/download/%v/*.apk
+CurrentVersion: '0'
+CurrentVersionCode: 0
 `;
 
     fs.writeFileSync(path.join(METADATA_DIR, `${appId}.yml`), yamlContent, 'utf8');

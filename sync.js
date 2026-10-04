@@ -79,15 +79,21 @@ async function generateAppMetadata(repoConfig) {
 
     const donateYaml = donate ? `Donate: ${donate}\n` : '';
     const websiteYaml = website ? `WebSite: ${website}\n` : `WebSite: ${data.html_url}\n`;
+    const wikiYaml = data.has_wiki ? `Wiki: ${data.html_url}/wiki\n` : '';
+    const requiresRoot = repoConfig.requiresRoot ? 'RequiresRoot: yes\n' : '';
 
     const yamlContent = `AuthorName: "Creadores Program"
 Categories:
 ${categoriesYaml}
-${antiFeaturesYaml}${donateYaml}${websiteYaml}
+${antiFeaturesYaml}${requiresRoot}${donateYaml}${websiteYaml}${wikiYaml}
 License: ${data.license?.spdx_id || 'NOASSERTION'}
 SourceCode: ${data.html_url}
 IssueTracker: ${data.html_url}/issues
+Changelog: ${data.html_url}/releases
 Summary: "${data.description || 'Aplicación oficial de Creadores Program'}"
+UpdateCheckMode: Tags
+AutoUpdateMode: Version %v
+Binaries: ${data.html_url}/releases/download/%v/*.apk
 `;
 
     fs.writeFileSync(path.join(METADATA_DIR, `${appId}.yml`), yamlContent, 'utf8');
@@ -222,7 +228,7 @@ async function fetchChangelogs(repoConfig) {
 
 async function run() {
   for (const item of REPOSITORIES) {
-    await fetchAllApks(item);
+    //await fetchAllApks(item);
     await generateAppMetadata(item);
     await fetchScreenshots(item);
     await fetchChangelogs(item);

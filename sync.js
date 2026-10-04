@@ -6,7 +6,7 @@ const REPOSITORIES = [
     repo: 'Creadores-Program/CreaProDroid',
     package: 'org.CreadoresProgram.CreaProDroid',
     categories: ['AI Chat', 'Utility', 'System', 'Internet'],
-    antiFeatures: ['NonFreeNet'],
+    antiFeatures: ['NonFreeNet', 'TetheredNet'],
     website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: 'GithubResources'
   },
@@ -14,7 +14,7 @@ const REPOSITORIES = [
     repo: 'Creadores-Program/CreaTV',
     package: 'org.CreadoresProgram.CreaTv',
     categories: ['Multimedia', 'Internet'],
-    antiFeatures: ['NonFreeNet'],
+    antiFeatures: ['NonFreeNet', 'TetheredNet'],
     website: 'https://discord.com/invite/mrmHcwxXff',
     screenshotsDir: '.github/images'
   },

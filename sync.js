@@ -79,13 +79,12 @@ async function generateAppMetadata(repoConfig) {
 
     const donateYaml = donate ? `Donate: ${donate}\n` : '';
     const websiteYaml = website ? `WebSite: ${website}\n` : `WebSite: ${data.html_url}\n`;
-    const wikiYaml = data.has_wiki ? `Wiki: ${data.html_url}/wiki\n` : '';
     const requiresRoot = repoConfig.requiresRoot ? 'RequiresRoot: yes\n' : '';
 
     const yamlContent = `AuthorName: "Creadores Program"
 Categories:
 ${categoriesYaml}
-${antiFeaturesYaml}${requiresRoot}${donateYaml}${websiteYaml}${wikiYaml}
+${antiFeaturesYaml}${requiresRoot}${donateYaml}${websiteYaml}
 License: ${data.license?.spdx_id || 'NOASSERTION'}
 SourceCode: ${data.html_url}
 IssueTracker: ${data.html_url}/issues

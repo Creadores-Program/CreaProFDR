@@ -28,8 +28,19 @@ jobs:
       - name: Install fdroidserver
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip python3-setuptools libjpeg-dev zlib1g-dev
-          sudo pip3 install --upgrade --break-system-packages --ignore-installed typing_extensions fdroidserver
+          sudo apt-get install -y \
+            python3-pip \
+            python3-setuptools \
+            python3-pillow \
+            libjpeg-dev \
+            zlib1g-dev \
+            imagemagick \
+            graphicsmagick \
+            pngquant \
+            optipng \
+            librsvg2-bin \
+            inkscape
+          sudo pip3 install --upgrade --break-system-packages --ignore-installed typing_extensions fdroidserver pillow
 
       - name: Set Key
         run: echo "${{ secrets.CREAPROFDRKEYAPPB }}" | base64 -d > CreaProFDR.keystore

@@ -51,6 +51,9 @@ Parfois, lors du lancement d'une vidéo YouTube ou d'un flux d'une autre platefo
 ### 2. Performances sur les Anciennes Versions d'Android (Android 2.3 - 4.4)
 - Sur les versions Android 2.3 à 4.4 (Gingerbread / KitKat), des **ralentissements (lag) ou des bugs** peuvent survenir lors de la lecture sur YouTube Live. Cela est dû à l'API iframe de YouTube qui n'est pas optimisée pour la version obsolète du Webview de ces systèmes.
 
+### 3. Proxy TLS 1.2 / 1.3 (Android 2.3 - 3.3)
+- Proxy support **TLS 1.2/1.3** pour **Android 2.3 à 3.3** est actuellement en phase expérimentale**, de sorte que des pannes de connexion ou d'instabilité peuvent se produire lors de la connexion avec des serveurs modernes.
+
 ---
 ## 🎨 Crédits
 

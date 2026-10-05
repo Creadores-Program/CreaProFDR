@@ -51,6 +51,9 @@ A volte, all'avvio di un video di YouTube o di uno stream di altre piattaforme, 
 ### 2. Prestazioni su Versioni Datate di Android (Android 2.3 - 4.4)
 - Sulle versioni di Android da 2.3 a 4.4 (Gingerbread / KitKat), si potrebbero riscontrare **lag o bug** con YouTube Live. Ciò è dovuto alla `iframe API` non ottimizzata per le versioni obsolete della WebView di sistema.
 
+### 3. Proxy TLS 1.2 / 1.3 (Android 2.3 - 3.3)
+- Supporto proxy **TLS 1.2/1.3** per **Android da 2.3 a 3.3** è attualmente in **fase sperimentale**, quindi i guasti di connessione o instabilità possono verificarsi quando ci si connette con server moderni.
+
 ---
 
 ## 🎨 Crediti
